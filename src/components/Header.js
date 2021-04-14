@@ -18,10 +18,10 @@ const styles = theme => ({
     flexGrow: 1,
   },
   button: {
-    margin: theme.spacing.unit,
+    margin: theme.spacing(1),
   },
   rightIcon: {
-    marginLeft: theme.spacing.unit,
+    marginLeft: theme.spacing(1),
   },
   avatar: {
     margin: 10,
@@ -76,7 +76,7 @@ function Header({ classes }) {
     <div className={classes.root}>
       <AppBar position="static" color="primary">
         <Toolbar>
-          <Typography variant="title" color="inherit" className={classes.flex}>
+          <Typography variant="h5" color="inherit" className={classes.flex}>
             Firebase Videos
           </Typography>
           {
