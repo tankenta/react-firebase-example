@@ -1,4 +1,5 @@
 import React from 'react';
+import LoadingOverlay from 'react-loading-overlay';
 import firebase from 'firebase/app';
 import 'firebase/storage';
 import 'firebase/firestore';
@@ -10,12 +11,13 @@ const handleFileSelect = (event, setVideo) => {
   setVideo(video);
 }
 
-const handleSubmit = (event, video) => {
+const handleSubmit = (event, video, setVideo, setLoading) => {
   event.preventDefault();
-  fileUpload(video);
+  setLoading(true);
+  fileUpload(video, setVideo, setLoading);
 }
 
-const fileUpload = async (video, setVideo) => {
+const fileUpload = async (video, setVideo, setLoading) => {
   try {
     const userUid = firebase.auth().currentUser.uid;
     const filePath = `videos/${userUid}/${video.name}`;
@@ -36,9 +38,9 @@ const fileUpload = async (video, setVideo) => {
     }
 
     console.log(fileSnapshot);
-    if (fileSnapshot.state === 'success') {
-      setVideo(null);
-    } else {
+    setVideo(null);
+    setLoading(false);
+    if (fileSnapshot.state !== 'success') {
       alert('File upload failed');
     }
   } catch (error) {
@@ -54,13 +56,16 @@ const saveVideoMetadata = metadata => {
 
 const VideoUpload = () => {
   const [video, setVideo] = React.useState(null);
+  const [loading, setLoading] = React.useState(false);
 
   return (
-    <form onSubmit={e => handleSubmit(e, video)}>
-      <h2>Video Upload</h2>
-      <input type="file" accept="video/*" onChange={e => handleFileSelect(e, setVideo)} />
-      <button type="submit">Upload Video</button>
-    </form>
+    <LoadingOverlay active={loading} spinner text="Loading your content...">
+      <form onSubmit={e => handleSubmit(e, video, setVideo, setLoading)}>
+        <h2>Video Upload</h2>
+        <input type="file" accept="video/*" onChange={e => handleFileSelect(e, setVideo)} />
+        <button type="submit">Upload Video</button>
+      </form>
+    </LoadingOverlay>
   );
 }
 
