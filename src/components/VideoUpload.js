@@ -48,10 +48,10 @@ const fileUpload = async (video, setVideo, setLoading) => {
   }
 }
 
-const saveVideoMetadata = metadata => {
+const saveVideoMetadata = async metadata => {
   const userUid = firebase.auth().currentUser.uid;
   const videoRef = firebase.firestore().doc(`users/${userUid}`).collection('videos').doc();
-  await videoRef.set({ ...metadata, uid: videoRef.id, merge: true });
+  await videoRef.set({ ...metadata, uid: videoRef.id }, { merge: true });
 }
 
 const VideoUpload = () => {
