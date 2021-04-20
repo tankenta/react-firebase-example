@@ -29,10 +29,7 @@ const VideoFeed = ({ classes }) => {
     const userUid = firebase.auth().currentUser.uid;
     const collection = await firebase.firestore().doc(`users/${userUid}`).collection('videos').limit(50);
     const querySnapshot = await collection.get();
-    const videosMetadata = [];
-    await querySnapshot.forEach(doc => {
-      videosMetadata.push(doc.data());
-    });
+    const videosMetadata = querySnapshot.docs.map(doc => doc.data());
     setVideos(videosMetadata);
   }
   React.useEffect(() => {
