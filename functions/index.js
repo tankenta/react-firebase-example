@@ -3,7 +3,7 @@ const path = require('path');
 const os = require('os');
 const fs = require('fs');
 const ffmpeg = require('fluent-ffmpeg');
-const ffmpeg_static = require('ffmpeg-static');
+const ffmpegBin = require('@ffmpeg-installer/ffmpeg');
 const UUID = require('uuid-v4');
 const serviceAccount = require('./config/service_account.json');
 
@@ -43,7 +43,7 @@ exports.transcodeVideo = functions.storage.object().onFinalize(async object => {
     const bucket = gcs.bucket(bucketName);
     const filePath = object.name;
     const fileName = filePath.split('/').pop();
-    const tempFilePath = path.join(os.tempdir(), fileName);
+    const tempFilePath = path.join(os.tmpdir(), fileName);
     const videoFile = bucket.file(filePath);
 
     const targetTempFileName = `${fileName.replace(/\.[^/.]+$/, '')}_output.mp4`;
@@ -55,7 +55,7 @@ exports.transcodeVideo = functions.storage.object().onFinalize(async object => {
     await videoFile.download({ destination: tempFilePath });
 
     const command = ffmpeg(tempFilePath)
-        .setFfmpegPath(ffmpeg_static.path)
+        .setFfmpegPath(ffmpegBin.path)
         .format('mp4')
         .output(targetTempFilePath);
 
